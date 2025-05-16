@@ -1,4 +1,4 @@
-const crypto = require('asymmetric-crypto')
+// const crypto = require('asymmetric-crypto')
  
 // Generate a key pair
 // -> {
@@ -13,31 +13,31 @@ const crypto = require('asymmetric-crypto')
 //   publicKey: 'tCI4ilHTknv97DZ6xE8O3o/UwRc7D8kX5FhjLBiwLn0='
 // }
  
-const myKeyPair = crypto.keyPair()
-const theirKeyPair = crypto.keyPair()
+// const myKeyPair = crypto.keyPair()
+// const theirKeyPair = crypto.keyPair()
 
-console.log("myKeyPair")
-console.log(myKeyPair)
-console.log("\ntheirKeyPair")
-console.log(theirKeyPair)
+// console.log("myKeyPair")
+// console.log(myKeyPair)
+// console.log("\ntheirKeyPair")
+// console.log(theirKeyPair)
  
 
-const data = {
-  name: 'John',
-  age: 30
-}
-// Encrypt data
-const encrypted = crypto.encrypt(JSON.stringify(data), theirKeyPair.publicKey, myKeyPair.secretKey)
-console.log("\nencrypted")
-console.log(encrypted)
+// const data = {
+//   name: 'John',
+//   age: 30
+// }
+// // Encrypt data
+// const encrypted = crypto.encrypt(JSON.stringify(data), theirKeyPair.publicKey, myKeyPair.secretKey)
+// console.log("\nencrypted")
+// console.log(encrypted)
 // -> {
 //   data: '63tP2r8WQuJ+k+jzsd8pbT6WYPHMTafpeg==',
 //   nonce: 'BDHALdoeBiGg7wJbVdfJhVQQyvpxrBSo'
 // }
  
 // Decrypt data
-const decrypted = crypto.decrypt(encrypted.data, encrypted.nonce, myKeyPair.publicKey, theirKeyPair.secretKey)
+// const decrypted = crypto.decrypt(encrypted.data, encrypted.nonce, myKeyPair.publicKey, theirKeyPair.secretKey)
 
-console.log("\ndecrypted")
-console.log(JSON.parse(decrypted))
+// console.log("\ndecrypted")
+// console.log(JSON.parse(decrypted))
  

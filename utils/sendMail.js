@@ -1,29 +1,43 @@
 const nodemailer = require("nodemailer");
-const asyncHandler = require('../utils/asyncHandler');
 
-const sendMail = asyncHandler(async ({ to, subject, html }) => {
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    secure: false,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
+const sendMail = async ({ to, subject, html }) => {
+  try {
+    console.log("dome")
+      const config = {
+      username: process.env.SENDER_EMAIL,
+      password: process.env.PASSWORD,
+      smtpServer: process.env.SMTPSERVER,
+      smtpPort: Number(process.env.SMTPPORT),
+      imapServer: process.env.IMAPSERVER,
+      imapPort: process.env.IMAPPORT,
+      pop3Port: process.env.POP3PORT,
+    };
 
-  const info = await transporter.sendMail({
-    from: process.env.SMTP_USER,
-    to,
-    subject,
-    html,
-  });
+    const transporter = nodemailer.createTransport({
+      host: config.smtpServer,
+      port: config.smtpPort,
+      secure: config.smtpPort === 465,
+      auth: {
+        user: config.username,
+        pass: config.password,
+      },
+    });
+    const info = await transporter.sendMail({
+      from: config.username,
+      to,
+      subject,
+      html,
+    });
 
-  console.log("✅ Email sent:", info.messageId);
+    console.log("✅ Email sent:", info.messageId);
 
 
-  return info.messageId ? true : false;
-});
+    return info.messageId ? true : false;
+  } catch (error) {
+    console.error("❌ Error sending email:", error);
+    return false;
+  }
+};
 
 
 module.exports = sendMail;

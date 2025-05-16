@@ -15,7 +15,7 @@ const verifyJWT = asyncHandler(async (req, _, next) => {
         }
 
         // verify token => find user => attach user to request object
-        const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN)
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET)
 
         const user = await User.findById(decodedToken?._id).select("-password -refreshToken")
 

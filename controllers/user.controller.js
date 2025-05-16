@@ -1,4 +1,5 @@
 const User = require('../schema/User');
+const Card = require('../schema/CardInfo');
 const ApiError = require('../utils/ApiError');
 const ApiResponse = require('../utils/ApiResponse');
 const asyncHandler = require('../utils/asyncHandler');
@@ -6,7 +7,7 @@ const sendMail = require('../utils/sendMail');
 const bcrypt = require('bcryptjs');
 const { generateFourDigitCode } = require('../utils/codeGenerator');
 const validateUserEmailUsingArcjet = require('../utils/validateEmailUsingArcjet')
-const generateTokenAndSetCookie = require('../utils/generateToken');
+const jwt = require('jsonwebtoken');
 
 
 
@@ -47,16 +48,19 @@ const signUp = asyncHandler(async (req, res) => {
 
   await user.save();
 
-  const mailOptions = {
-    to: email,
-    subject: 'Verify your email',
-    html: `<p>Hi ${name},</p> Your verification code is <b>${verificationCode}</b></p>`,
-  }
-  const isEmailSent = await sendMail(mailOptions);
+  console.log(verificationCode);
 
-  if (!isEmailSent) {
-    throw new ApiError(500, 'Failed to send verification email');
-  }
+  // const mailOptions = {
+  //   to: email,
+  //   subject: 'Verify your email',
+  //   html: `<p>Hi ${name},</p> Your verification code is <b>${verificationCode}</b></p>`,
+  // }
+  // const isEmailSent = await sendMail(mailOptions);
+
+
+  // if (!isEmailSent) {
+  //   throw new ApiError(500, 'Failed to send verification email');
+  // }
 
   return res
     .status(201)
@@ -66,8 +70,8 @@ const signUp = asyncHandler(async (req, res) => {
 
 const verification = asyncHandler(async (req, res) => {
 
-  const { code } = req.body;
-
+  const { code, email } = req.body;
+  console.log(email)
   if (!code) throw new ApiError(400, 'Email and code are required');
 
   const user = await User.findOne({ email });
@@ -109,7 +113,34 @@ const signIn = asyncHandler(async (req, res) => {
   if (!user.isVerified)
     throw new ApiError(403, 'Please verify your email before logging in');
 
-  const token = generateTokenAndSetCookie(user, res);
+  const card = await Card.findOne({ userId: user._id });
+
+
+
+  const token = jwt.sign(
+    {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      payment: card ? true : false
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+
+
+  
+  res.cookie('token', token, {
+    httpOnly: false,
+    secure: false,
+    sameSite: 'strict',
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: '/',
+  });
+
+  if (!token) {
+    throw new ApiError(500, 'Failed to generate token');
+  }
 
   return res
     .status(200)
