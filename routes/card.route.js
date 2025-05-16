@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
-// const { createUser, getUser, getUsers, updateUser, deleteUser, verifyUser, loginUser, forgotPassword, logoutUser, newRefreshToken } = require('../controllers/user.controllers');
-const { verifyJWT } = require('../middlewares/auth.middleware');
+// const { signUp , verification, signIn, forgotPassword, resetPassword } = require('../controllers/user.controller');
+const { verifyJWT } = require('../middlewares/auth');
 
 
-// router.get('/:id',verifyJWT, getUser);
-router.get('/',verifyJWT, getUsers);
+router.get('/card-details',verifyJWT, getCardDetails);
+router.post('/card-details', addCardDetails);
+
+
 
 
 // Export the router

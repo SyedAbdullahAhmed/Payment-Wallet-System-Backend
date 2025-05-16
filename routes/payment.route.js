@@ -4,9 +4,7 @@ const router = express.Router();
 const { verifyJWT } = require('../middlewares/auth');
 
 
-router.post('/get-public-key', getPublicKey);
-router.post('/generate-keys', generateKeys);
-
+router.post('/send-payment', sendPayment);
 
 
 
