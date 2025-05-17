@@ -5,7 +5,8 @@ const app = express()
 const port = 3000
 const userController = require('./routes/user.route')
 const cardController = require('./routes/card.route')
-// const keysController = require('./controllers/keys.controller')
+const keysController = require('./routes/keys.route')
+const paymenttController = require('./routes/payment.route')
 // const generalController = require('./controllers/general.controller')
 
 require('./db/connection')
@@ -20,8 +21,8 @@ app.use(cors({
 
 app.use('/api/user', userController)
 app.use('/api/card', cardController)
-// app.use('/api/keys', keysController)
-// app.use('/api/general', generalController)
+app.use('/api/keys', keysController)
+app.use('/api/payment', paymenttController)
 
 app.get('/', (req, res) => {
   res.send('Hello World!')

@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-// const { signUp , verification, signIn, forgotPassword, resetPassword } = require('../controllers/user.controller');
+const { generateKeys,getKeys } = require('../controllers/keys.controller');
 const { verifyJWT } = require('../middlewares/auth');
 
 
-router.post('/get-public-key', getPublicKey);
-router.post('/generate-keys', generateKeys);
+router.get('/get-keys',verifyJWT, getKeys);
+router.post('/generate-keys',verifyJWT, generateKeys);
 
 
 

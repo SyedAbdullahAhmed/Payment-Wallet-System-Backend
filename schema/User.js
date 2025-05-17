@@ -49,6 +49,11 @@ const userSchema = new mongoose.Schema({
   codeExpiry: {
     type: Date,
     default: null,
+  },
+
+  totalBalance: {
+    type: Number,
+    default: 0,
   }
 
 }, {

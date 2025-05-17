@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-// const { signUp , verification, signIn, forgotPassword, resetPassword } = require('../controllers/user.controller');
+const { sendPayment } = require('../controllers/payment.controller');
 const { verifyJWT } = require('../middlewares/auth');
 
 
-router.post('/send-payment', sendPayment);
+router.post('/send-payment',verifyJWT, sendPayment);
 
 
 

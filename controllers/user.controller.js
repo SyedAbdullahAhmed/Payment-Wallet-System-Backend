@@ -18,10 +18,10 @@ const signUp = asyncHandler(async (req, res) => {
   if (!name || !email || !password)
     throw new ApiError(400, 'All fields are required');
 
-  const isValidEmail = await validateUserEmailUsingArcjet(req, email);
-  if (!isValidEmail) {
-    throw new ApiError(400, 'Email is disposable or invalid');
-  }
+  // const isValidEmail = await validateUserEmailUsingArcjet(req, email);
+  // if (!isValidEmail) {
+  //   throw new ApiError(400, 'Email is disposable or invalid');
+  // }
 
   const existingUser = await User.findOne({ email });
   if (existingUser)
@@ -129,7 +129,7 @@ const signIn = asyncHandler(async (req, res) => {
   );
 
 
-  
+
   res.cookie('token', token, {
     httpOnly: false,
     secure: false,
@@ -220,7 +220,33 @@ const resetPassword = asyncHandler(async (req, res) => {
 });
 
 
+const checkPassword = asyncHandler(async (req, res) => {
+
+  const user = req.user;
+  const { password } = req.body;
+
+  const getPassword = await User.findOne({ _id: user._id }).select('password');
+  if (!getPassword) {
+    console.error('❌ Password not found in DB');
+    throw new ApiError(404, 'Password not found');
+  }
+
+  console.log('🔎 Retrieved hashed password from DB');
+
+  const isPasswordCorrect = await bcrypt.compare(password, getPassword.password);
+  console.log('🔐 Password match:', isPasswordCorrect);
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      { isPasswordCorrect },
+      'Password checked successfully.'
+    )
+  );
+});
+
+
 module.exports = {
-  signUp, verification, signIn, forgotPassword, resetPassword
+  signUp, verification, signIn, forgotPassword, resetPassword, checkPassword
 };
 
