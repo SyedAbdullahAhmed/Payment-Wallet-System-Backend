@@ -16,7 +16,7 @@ require('./db/connection')
 app.use(express.json())
 
 app.use(cors({
-  origin: 'http://localhost:8000', // frontend URL
+  origin: 'https://payment-wallet-system.vercel.app/', // frontend URL
   credentials: true                // allow cookies
 }));
 
