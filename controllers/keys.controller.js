@@ -65,7 +65,7 @@ const getKeys = asyncHandler(async (req, res) => {
   console.log('🔐 Starting key generation process');
 
   const user = req.user;
-  
+
 
   const getKeys = await Keys.findOne({ userId: user._id });
 
@@ -80,7 +80,48 @@ const getKeys = asyncHandler(async (req, res) => {
   return res.status(200).json(
     new ApiResponse(
       200,
-      { publicKey: getKeys.publicKey , privateKey: getKeys.privateKey },
+      { publicKey: getKeys.publicKey, privateKey: getKeys.privateKey },
+      'Keys generated successfully.'
+    )
+  );
+});
+
+
+const getPublicKeys = asyncHandler(async (req, res) => {
+
+
+
+  const publicKeys = await Keys.aggregate([
+    {
+      $lookup: {
+        from: 'users',                 // collection to join
+        localField: 'userId',         // field from Keys
+        foreignField: '_id',          // field from Users
+        as: 'userInfo'                // output array field
+      }
+    },
+    {
+      $unwind: '$userInfo'            // flatten the userInfo array
+    },
+    {
+      $project: {
+        _id: 1,
+        publicKey: 1,
+        name: '$userInfo.name'    // select username from joined user
+      }
+    }
+  ]);
+
+  console.log('Public Keys:', publicKeys);
+
+
+
+
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      publicKeys,
       'Keys generated successfully.'
     )
   );
@@ -91,5 +132,5 @@ const getKeys = asyncHandler(async (req, res) => {
 
 
 module.exports = {
-  generateKeys, getKeys
+  generateKeys, getKeys,getPublicKeys
 };
