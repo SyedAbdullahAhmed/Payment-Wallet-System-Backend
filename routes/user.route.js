@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { signUp , verification, signIn, forgotPassword, resetPassword, checkPassword } = require('../controllers/user.controller');
+const { signUp , verification, signIn, forgotPassword, resetPassword, checkPassword, totalBalance } = require('../controllers/user.controller');
 const { verifyJWT } = require('../middlewares/auth');
 
 
@@ -12,6 +12,7 @@ router.post('/signin', signIn);
 // router.post('/reset-password', resetPassword);
 // router.post('/reset-password', resetPassword);
 router.post('/check-password', verifyJWT, checkPassword);
+router.get('/total-balance', verifyJWT, totalBalance);
 
 
 // Export the router

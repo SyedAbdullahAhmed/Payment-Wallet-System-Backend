@@ -18,10 +18,10 @@ const signUp = asyncHandler(async (req, res) => {
   if (!name || !email || !password)
     throw new ApiError(400, 'All fields are required');
 
-  // const isValidEmail = await validateUserEmailUsingArcjet(req, email);
-  // if (!isValidEmail) {
-  //   throw new ApiError(400, 'Email is disposable or invalid');
-  // }
+  const isValidEmail = await validateUserEmailUsingArcjet(req, email);
+  if (!isValidEmail) {
+    throw new ApiError(400, 'Email is disposable or invalid');
+  }
 
   const existingUser = await User.findOne({ email });
   if (existingUser)
@@ -50,17 +50,44 @@ const signUp = asyncHandler(async (req, res) => {
 
   console.log(verificationCode);
 
-  // const mailOptions = {
-  //   to: email,
-  //   subject: 'Verify your email',
-  //   html: `<p>Hi ${name},</p> Your verification code is <b>${verificationCode}</b></p>`,
-  // }
-  // const isEmailSent = await sendMail(mailOptions);
+  // TODO: update template and uncomment
+  const mailOptions = {
+    to: email,
+    subject: 'Verify your email',
+    html: `
+  <html>
+  <head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  </head>
+  <body style="font-family: 'Poppins', sans-serif; background-color: #f4f6f8; padding: 40px; color: #2d2d2d;">
+    <div style="max-width: 640px; margin: auto; background: #ffffff; padding: 40px 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);">
+      <h2 style="font-size: 22px; margin-bottom: 10px;">Hi ${name},</h2>
+      <p style="font-size: 16px; line-height: 1.6;">Your verification code is:</p>
+      
+      <p style="font-size: 84px; font-weight: 600; color: #2e5bff; text-align: center; letter-spacing: 4px; margin: 30px 0;">
+        ${verificationCode}
+      </p>
+
+      <p style="font-size: 15px; line-height: 1.5;">Please use this code within <strong>10 minutes</strong> to verify your email address.</p>
+      
+      <p style="font-size: 14px; color: #666; margin-top: 20px;">If you did not request this verification, you can safely ignore this email.</p>
+      
+      <hr style="margin: 40px 0; border: none; border-top: 1px solid #eee;" />
+
+      <p style="font-size: 12px; color: #999; text-align: center;">&copy; ${new Date().getFullYear()} Your Company. All rights reserved.</p>
+    </div>
+  </body>
+</html>
+
+`
+
+  }
+  const isEmailSent = await sendMail(mailOptions);
 
 
-  // if (!isEmailSent) {
-  //   throw new ApiError(500, 'Failed to send verification email');
-  // }
+  if (!isEmailSent) {
+    throw new ApiError(500, 'Failed to send verification email');
+  }
 
   return res
     .status(201)
@@ -245,8 +272,26 @@ const checkPassword = asyncHandler(async (req, res) => {
   );
 });
 
+const totalBalance = asyncHandler(async (req, res) => {
+
+  const user = req.user;
+
+  const totalBalance = await User.findOne({ _id: user._id }).select('totalBalance');
+
+  console.log(totalBalance)
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      { totalBalance: totalBalance.totalBalance },
+      'Total balance fetched successfully.'
+    )
+  );
+});
+
 
 module.exports = {
-  signUp, verification, signIn, forgotPassword, resetPassword, checkPassword
+  signUp, verification, signIn, forgotPassword, resetPassword, checkPassword,
+  totalBalance
 };
 
