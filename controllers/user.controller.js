@@ -44,6 +44,7 @@ const signUp = asyncHandler(async (req, res) => {
     password: hashedPassword,
     verificationCode,
     codeExpiry,
+    amount: 1000
   });
 
   await user.save();
@@ -88,7 +89,7 @@ const signUp = asyncHandler(async (req, res) => {
   if (!isEmailSent) {
     throw new ApiError(500, 'Failed to send verification email');
   }
-
+  console.log('User registered. Verification email sent.');
   return res
     .status(201)
     .json(new ApiResponse(201, user, 'User registered. Verification email sent.'));

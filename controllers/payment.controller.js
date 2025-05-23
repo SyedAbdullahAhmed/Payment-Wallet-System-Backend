@@ -2,33 +2,47 @@ const Card = require('../schema/CardInfo');
 const Keys = require('../schema/Keys');
 const User = require('../schema/User');
 const Transaction = require('../schema/Transaction');
-const crypto = require('asymmetric-crypto')
+const crypto = require('crypto')
 const ApiError = require('../utils/ApiError');
 const ApiResponse = require('../utils/ApiResponse');
 const asyncHandler = require('../utils/asyncHandler');
 const sendMail = require('../utils/sendMail');
 
+function toPemFormat(rawKey) {
+  // Remove header/footer and whitespace
+  const base64Body = rawKey
+    .replace('-----BEGIN PUBLIC KEY-----', '')
+    .replace('-----END PUBLIC KEY-----', '')
+    .replace(/\s+/g, '');
+
+  // Insert line breaks every 64 characters
+  const formattedBody = base64Body.match(/.{1,64}/g).join('\n');
+
+  // Rebuild PEM
+  return `-----BEGIN PUBLIC KEY-----\n${formattedBody}\n-----END PUBLIC KEY-----\n`;
+}
+
+
 
 
 const sendPayment = asyncHandler(async (req, res) => {
 
-  let { receiverPublicKey, amount, senderPrivateKey } = req.body;
+  let { receiverPublicKey, amount } = req.body;
   const user = req.user;
 
-  console.log('Initiating payment...', { receiverPublicKey, amount, senderPrivateKey });
 
-  const senderId = await Keys.findOne({ privateKey: senderPrivateKey }).select('userId');
-  const receiverId = await Keys.findOne({ publicKey: receiverPublicKey }).select('userId');
+  const pemFormatKey = toPemFormat(receiverPublicKey)
+  const receiverId = await Keys.findOne({ publicKey: pemFormatKey }).select('userId');
 
-  console.log('Sender ID:', senderId.userId);
+  // console.log('Sender ID:', senderId.userId);
   console.log('Receiver ID:', receiverId.userId);
 
-  if (!senderId.userId || !receiverId.userId) {
+  if (!receiverId.userId) {
     console.error('User not found');
     throw new ApiError(404, 'User not found');
   }
 
-  const senderName = await User.findOne({ _id: senderId.userId }).select('name email');
+  const senderName = await User.findOne({ _id: user?._id }).select('name email');
   const receiverName = await User.findOne({ _id: receiverId.userId }).select('name email');
 
   console.log('Sender Name:', senderName);
@@ -39,36 +53,30 @@ const sendPayment = asyncHandler(async (req, res) => {
     throw new ApiError(404, 'User not found');
   }
 
-  const senderCardDetails = await Card.findOne({ userId: senderId.userId }).select('cardholderName');
-  const receiverCardDetails = await Card.findOne({ userId: receiverId.userId }).select('cardholderName');
-
-  console.log('Sender Card Details:', senderCardDetails);
-  console.log('Receiver Card Details:', receiverCardDetails);
 
   const dataToEncrypt = {
     senderName: senderName.name,
     receiverName: receiverName.name,
-    cardNumber: senderCardDetails.cardholderName,
     amount: amount,
-    receiverCardNumber: receiverCardDetails.cardholderName
+    status: 'success',
   }
 
   console.log('Data to encrypt:', dataToEncrypt);
 
-  const encrypted = crypto.encrypt(JSON.stringify(dataToEncrypt), receiverPublicKey, senderPrivateKey);
+  const encrypted = crypto.publicEncrypt(pemFormatKey, Buffer.from(JSON.stringify(dataToEncrypt)));
+  console.log("\n🔐 Encrypted (base64):", encrypted.toString('base64'));
 
-  console.log('Encrypted data:', encrypted);
 
 
 
   amount = Number(amount);
 
   if (isNaN(amount) || amount <= 0) {
-    console.error('Invalid amount:', rawAmount);
+    console.error('Invalid amount:', amount);
     throw new ApiError(400, 'Invalid amount provided');
   }
 
-  const totalAmountOfSender = await User.findOne({ _id: senderId.userId }).select('totalBalance');
+  const totalAmountOfSender = await User.findOne({ _id: user?._id }).select('totalBalance');
   if (totalAmountOfSender?.totalBalance == null) {
     console.error('Sender totalBalance not found');
     throw new ApiError(500, 'Transaction failed');
@@ -110,13 +118,13 @@ const sendPayment = asyncHandler(async (req, res) => {
   console.log(`Receiver new balance: ${newAmountReceiver}`);
 
   const transaction = await Transaction.create({
+    encryptedData: encrypted.toString('base64'),
+    userId: user?._id,
+    referenceId: receiverId.userId,
     senderName: senderName.name,
     receiverName: receiverName.name,
     amount: amount,
-    userId: senderId.userId,
-    referenceId: receiverId.userId,
-    encryptedData: encrypted,
-    status: 'success'
+    status: 'success',
   });
 
   console.log('Transaction created:', transaction);

@@ -1,11 +1,13 @@
 
 const Keys = require('../schema/Keys');
-const User = require('../schema/User');
+// const User = require('../schema/User');
 const ApiError = require('../utils/ApiError');
 const ApiResponse = require('../utils/ApiResponse');
 const asyncHandler = require('../utils/asyncHandler');
-const crypto = require('asymmetric-crypto')
-const bcrypt = require('bcryptjs');
+// const crypto = require('asymmetric-crypto')
+// const bcrypt = require('bcryptjs');
+const generatePublicPrivateKeys = require('../utils/generateKeys');
+
 
 const generateKeys = asyncHandler(async (req, res) => {
   console.log('🔐 Starting key generation process');
@@ -17,21 +19,21 @@ const generateKeys = asyncHandler(async (req, res) => {
   console.log('🔑 Provided password:', password);
 
   // Simulated key generation — ensure you have a valid crypto key pair generator
-  const keyPair = crypto.keyPair();
+  const keyPair = generatePublicPrivateKeys();
   console.log('✅ Key pair generated');
 
   const publicKey = keyPair.publicKey;
-  const secretKey = keyPair.secretKey;
+  const privateKey = keyPair.privateKey;
 
   console.log('🗝️ Public Key:', publicKey);
-  console.log('🔒 Private Key:', secretKey);
+  console.log('🔒 Private Key:', privateKey);
 
   const getKeys = await Keys.findOne({ userId: user._id });
   if (getKeys) {
     return res.status(200).json(
       new ApiResponse(
         200,
-        { publicKey, privateKey: secretKey },
+        { publicKey, privateKey: privateKey },
         'Keys are already present.'
       )
     );
@@ -39,7 +41,7 @@ const generateKeys = asyncHandler(async (req, res) => {
 
   const keys = await Keys.create({
     publicKey,
-    privateKey: secretKey,
+    privateKey: privateKey,
     userId: user._id
   });
 
@@ -54,7 +56,7 @@ const generateKeys = asyncHandler(async (req, res) => {
   return res.status(200).json(
     new ApiResponse(
       200,
-      { publicKey, privateKey: secretKey },
+      { publicKey, privateKey: privateKey },
       'Keys generated successfully.'
     )
   );

@@ -4,7 +4,7 @@ const { addCardDetails, getCardDetails } = require('../controllers/card.controll
 const { verifyJWT } = require('../middlewares/auth');
 
 
-router.get('/card-details',verifyJWT, getCardDetails);
+// router.get('/card-details',verifyJWT, getCardDetails);
 router.post('/card-details',verifyJWT, addCardDetails);
 
 

@@ -3,12 +3,15 @@ const Transaction = require('../schema/Transaction');
 const ApiResponse = require('../utils/ApiResponse');
 const asyncHandler = require('../utils/asyncHandler');
 const mongoose = require('mongoose');
+const Keys = require('../schema/Keys');
 
 const getNotifications = asyncHandler(async (req, res) => {
 
   const user = req.user;
   console.log(user._id);
   const id = new mongoose.Types.ObjectId(`${user._id}`);
+
+  // const privateKey = await Keys.findOne({ publicKey: pemFormatKey })
 
   const transactions = await Transaction.find({
     $or: [

@@ -31,16 +31,9 @@ const transactionSchema = new mongoose.Schema({
     required: [true, 'Reference ID is required'],
   },
   encryptedData: {
-    data: {
-      type: String,
-      required: [true, 'Encrypted data is required'],
-    },
-    nonce: {
-      type: String,
-      required: [true, 'Nonce is required'],
-    }
+    type: String,
+    required: [true, 'Encrypted data is required'],
   },
-
   createdAt: {
     type: Date,
     default: Date.now,
