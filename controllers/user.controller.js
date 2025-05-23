@@ -159,9 +159,9 @@ const signIn = asyncHandler(async (req, res) => {
 
 
   res.cookie('token', token, {
-    httpOnly: false,
-    secure: false,
-    sameSite: 'strict',
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'strict',
     maxAge: 7 * 24 * 60 * 60 * 1000,
     path: '/',
   });
