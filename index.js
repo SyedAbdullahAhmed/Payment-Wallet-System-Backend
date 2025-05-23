@@ -16,9 +16,13 @@ require('./db/connection')
 app.use(express.json())
 
 app.use(cors({
+<<<<<<< HEAD
   origin: ['http://localhost:8000',
     'https://payment-wallet-system.vercel.app'
   ],        
+=======
+   origin: ['http://localhost:8000', 'https://payment-wallet-system.vercel.app'],          
+>>>>>>> deb73f1a9a6a6be0ee484bda53ea40903f218d3a
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true   
