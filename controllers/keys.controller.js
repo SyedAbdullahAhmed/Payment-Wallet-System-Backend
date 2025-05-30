@@ -136,3 +136,11 @@ const getPublicKeys = asyncHandler(async (req, res) => {
 module.exports = {
   generateKeys, getKeys,getPublicKeys
 };
+
+// ✅ stetup mail trap
+// save data in localstorage
+// craete transcrpit
+// what to decrypt
+// comments proper on crypto logic
+// create a flow diagram
+// deploy

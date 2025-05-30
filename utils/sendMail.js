@@ -2,8 +2,27 @@ const nodemailer = require("nodemailer");
 
 const sendMail = async ({ to, subject, html }) => {
   try {
-    console.log("dome")
-      const config = {
+    if (process.env.NODE_ENV === "development") {
+      // Create a transporter using MailHog SMTP
+      let transporter = nodemailer.createTransport({
+        host: 'localhost',
+        port: 1025,
+        secure: false, // No SSL
+        auth: null     // MailHog doesn’t require auth
+      });
+
+      // Email options
+      let info = await transporter.sendMail({
+        from: '"Test Sender" <sender@example.com>',
+        to,
+        subject,
+        html
+      });
+
+      console.log(`Message sent: ${info.messageId}`);
+      return info.messageId ? true : false;;
+    }
+    const config = {
       username: process.env.SENDER_EMAIL,
       password: process.env.PASSWORD,
       smtpServer: process.env.SMTPSERVER,
@@ -41,3 +60,4 @@ const sendMail = async ({ to, subject, html }) => {
 
 
 module.exports = sendMail;
+
