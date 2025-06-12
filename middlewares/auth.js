@@ -8,7 +8,7 @@ const verifyJWT = asyncHandler(async (req, _, next) => {
     try {
         // get token from header or cookies
         // cookie is not present in mobile use header instead
-        const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "")
+        const token = req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "")
         console.log("Token:", token);
 
         if (!token) {

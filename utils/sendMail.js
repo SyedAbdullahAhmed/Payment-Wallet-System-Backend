@@ -1,8 +1,8 @@
 const nodemailer = require("nodemailer");
 
-const sendMail = async ({ to, subject, html }) => {
+const sendMail = async ({ to, subject, html, attachments }) => {
   try {
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.EMAIL_ENV === "development") {
       // Create a transporter using MailHog SMTP
       let transporter = nodemailer.createTransport({
         host: 'localhost',
@@ -16,7 +16,8 @@ const sendMail = async ({ to, subject, html }) => {
         from: '"Test Sender" <sender@example.com>',
         to,
         subject,
-        html
+        html,
+        attachments
       });
 
       console.log(`Message sent: ${info.messageId}`);
@@ -41,12 +42,15 @@ const sendMail = async ({ to, subject, html }) => {
         pass: config.password,
       },
     });
-    const info = await transporter.sendMail({
+
+    const opt = {
       from: config.username,
-      to,
+      to: to?.email,
       subject,
       html,
-    });
+      attachments
+    }
+    const info = await transporter.sendMail(opt);
 
     console.log("✅ Email sent:", info.messageId);
 

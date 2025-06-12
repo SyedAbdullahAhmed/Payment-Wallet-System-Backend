@@ -57,42 +57,45 @@ const crypto = require('crypto');
 //     format: 'pem'
 //   }
 // });
-// const {
-//   publicKey,
-//   privateKey,
-// } = crypto.generateKeyPairSync('rsa', {
-//   modulusLength: 4096,
-//   publicKeyEncoding: {
-//     type: 'spki',
-//     format: 'pem',
-//   },
-//   privateKeyEncoding: {
-//     type: 'pkcs8',
-//     format: 'pem',
-//   },
-// });
+let {
+  publicKey,
+  privateKey,
+} = crypto.generateKeyPairSync('rsa', {
+  modulusLength: 4096,
+  publicKeyEncoding: {
+    type: 'spki',
+    format: 'pem',
+  },
+  privateKeyEncoding: {
+    type: 'pkcs8',
+    format: 'pem',
+  },
+});
 
-// console.log(publicKey, privateKey)
+console.log(publicKey, privateKey)
+// publicKey = Buffer.from(publicKey).toString('base64');
+// privateKey = Buffer.from(privateKey).toString('base64');
+
 
 // console.log('✅ Public and Private Keys generated.');
 
 
 // // === Step 2: Encrypt and Decrypt a Message ===
-// const message = {
-//   name: "Abdullah", age: 12
-// };
+const message = {
+  name: "Abdullah", age: 12
+};
 
 
 
 // Message to encrypt
 
 // Encrypt using public key
-// const encrypted = crypto.publicEncrypt(publicKey, Buffer.from(JSON.stringify(message)));
-// console.log("\n🔐 Encrypted (base64):", encrypted.toString('base64'));
+const encrypted = crypto.publicEncrypt(publicKey, Buffer.from(JSON.stringify(message)));
+console.log("\n🔐 Encrypted (base64):", encrypted.toString('base64'));
 
 // // Decrypt using private key
-// const decrypted = crypto.privateDecrypt(privateKey, encrypted);
-// console.log("\n🔓 Decrypted:", decrypted.toString());
+const decrypted = crypto.privateDecrypt(privateKey, encrypted);
+console.log("\n🔓 Decrypted:", decrypted.toString());
 
 
 
@@ -118,4 +121,22 @@ const crypto = require('crypto');
 //   };
 // }
 // const a = generatePublicPrivateKeys()
-// console.log(a)
+// console.log(a)\
+
+
+// mails ✅ 
+// logs ✅ just add new acc and test no. of transactions ✅
+// only use senderid, encrypted data and receive id in transaction model and code ✅
+// recepit pdf: npm install pdfkit ✅
+
+// change the generate keys to base64
+// mail testing and attach pdf to maail
+// add mailENV to prod
+
+// uncomment emailcode and comment arcjet code
+// issue: use another mongodb uri
+// final testing 
+
+// make UI diagram for flow
+
+// add mongodb transaction if possible for pp

@@ -10,8 +10,19 @@ const keysController = require('./routes/keys.route')
 const paymentController = require('./routes/payment.route')
 const notificationsController = require('./routes/notifications.route')
 // const generalController = require('./controllers/general.controller')
+const createTransactionReceipt = require("./utils/createTransactionRecepit")
 
 require('./db/connection')
+
+const data = {
+  senderName: 'John Doe',
+  amount: 100,
+  receiverName: 'Alice Smith',
+  email: 'john.doe@example.com',
+};
+
+
+// createTransactionReceipt(data);
 
 
 app.use(express.json())
@@ -34,6 +45,7 @@ app.use('/api/notifications', notificationsController)
 app.get('/', async (req, res) => {
   res.send('server is up!')
 })
+
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}...`)

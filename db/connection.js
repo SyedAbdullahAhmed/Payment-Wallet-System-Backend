@@ -26,7 +26,6 @@ const connectDB = async () => {
     // Log the full error object for debugging (in development only)
     console.error('Full error details:', JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
     
-    process.exit(1);
   }
 };
 

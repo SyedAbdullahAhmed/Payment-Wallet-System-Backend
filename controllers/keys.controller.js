@@ -9,6 +9,7 @@ const asyncHandler = require('../utils/asyncHandler');
 const generatePublicPrivateKeys = require('../utils/generateKeys');
 
 
+
 const generateKeys = asyncHandler(async (req, res) => {
   console.log('🔐 Starting key generation process');
 
@@ -22,8 +23,9 @@ const generateKeys = asyncHandler(async (req, res) => {
   const keyPair = generatePublicPrivateKeys();
   console.log('✅ Key pair generated');
 
-  const publicKey = keyPair.publicKey;
-  const privateKey = keyPair.privateKey;
+  let publicKey = keyPair.publicKey;
+  let privateKey = keyPair.privateKey;
+
 
   console.log('🗝️ Public Key:', publicKey);
   console.log('🔒 Private Key:', privateKey);
@@ -39,9 +41,13 @@ const generateKeys = asyncHandler(async (req, res) => {
     );
   }
 
+  const publicKeyBase64 = Buffer.from(publicKey).toString('base64');
+  const privateKeyBase64 = Buffer.from(privateKey).toString('base64');
+
+
   const keys = await Keys.create({
-    publicKey,
-    privateKey: privateKey,
+    publicKey: publicKeyBase64,
+    privateKey: privateKeyBase64,
     userId: user._id
   });
 
@@ -56,7 +62,7 @@ const generateKeys = asyncHandler(async (req, res) => {
   return res.status(200).json(
     new ApiResponse(
       200,
-      { publicKey, privateKey: privateKey },
+      { publicKey: publicKeyBase64, privateKey: privateKeyBase64 },
       'Keys generated successfully.'
     )
   );
@@ -82,7 +88,10 @@ const getKeys = asyncHandler(async (req, res) => {
   return res.status(200).json(
     new ApiResponse(
       200,
-      { publicKey: getKeys.publicKey, privateKey: getKeys.privateKey },
+      {
+        publicKey: Buffer.from(getKeys.publicKey).toString('base64'),
+        privateKey: Buffer.from(getKeys.privateKey).toString('base64')
+      },
       'Keys generated successfully.'
     )
   );
@@ -116,8 +125,10 @@ const getPublicKeys = asyncHandler(async (req, res) => {
 
   console.log('Public Keys:', publicKeys);
 
-
-
+  // publicKeys.forEach(keys => {
+  //   keys.publicKey = Buffer.from(keys.publicKey, 'base64').toString('utf-8');
+  // });
+  // console.log('Public Keys:', publicKeys);
 
 
   return res.status(200).json(
@@ -131,16 +142,9 @@ const getPublicKeys = asyncHandler(async (req, res) => {
 
 
 
-
+``
 
 module.exports = {
-  generateKeys, getKeys,getPublicKeys
+  generateKeys, getKeys, getPublicKeys
 };
 
-// ✅ stetup mail trap
-// save data in localstorage
-// craete transcrpit
-// what to decrypt
-// comments proper on crypto logic
-// create a flow diagram
-// deploy

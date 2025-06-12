@@ -7,6 +7,7 @@ const sendMail = require('../utils/sendMail');
 const bcrypt = require('bcryptjs');
 const { generateFourDigitCode } = require('../utils/codeGenerator');
 const validateUserEmailUsingArcjet = require('../utils/validateEmailUsingArcjet')
+const validateEmail = require('../utils/deepEmailValidator')
 const jwt = require('jsonwebtoken');
 
 
@@ -18,11 +19,16 @@ const signUp = asyncHandler(async (req, res) => {
   if (!name || !email || !password)
     throw new ApiError(400, 'All fields are required');
 
-  const isValidEmail = await validateUserEmailUsingArcjet(req, email);
-  if (!isValidEmail) {
-    throw new ApiError(400, 'Email is disposable or invalid');
-  }
+  // const isValidEmail = await validateUserEmailUsingArcjet(req, email);
+  // if (!isValidEmail) {
+  //   throw new ApiError(400, 'Email is disposable or invalid');
+  // }
+  
+  // const isEmailRecordsValid = validateEmail(email)
 
+  // if (!isEmailRecordsValid) {
+  //   throw new ApiError(400, 'Email records are not valid!');
+  // }
   const existingUser = await User.findOne({ email });
   if (existingUser)
     throw new ApiError(400, 'Email already registered');

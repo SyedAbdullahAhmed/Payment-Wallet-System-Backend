@@ -53,7 +53,7 @@ const userSchema = new mongoose.Schema({
 
   totalBalance: {
     type: Number,
-    default: 0,
+    default: 1000,
   }
 
 }, {
