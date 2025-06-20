@@ -12,14 +12,15 @@ const notificationsController = require('./routes/notifications.route')
 // const generalController = require('./controllers/general.controller')
 const createTransactionReceipt = require("./utils/createTransactionRecepit")
 
-require('./db/connection')
+const connectDB = require('./db/connection')
+connectDB()
 
-const data = {
-  senderName: 'John Doe',
-  amount: 100,
-  receiverName: 'Alice Smith',
-  email: 'john.doe@example.com',
-};
+// const data = {
+//   senderName: 'John Doe',
+//   amount: 100,
+//   receiverName: 'Alice Smith',
+//   email: 'john.doe@example.com',
+// };
 
 
 // createTransactionReceipt(data);

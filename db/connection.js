@@ -29,12 +29,5 @@ const connectDB = async () => {
   }
 };
 
-// Execute as an async IIFE to allow for proper error handling
-(async () => {
-  try {
-    await connectDB();
-  } catch (err) {
-    console.error('Failed to connect to database:', err);
-    process.exit(1);
-  }
-})();
+module.exports = connectDB;
+
