@@ -45,11 +45,13 @@ const sendMail = async ({ to, subject, html, attachments }) => {
 
     const opt = {
       from: config.username,
-      to: to?.email,
+      to: to?.email || to ,
       subject,
       html,
-      attachments
+      ...(attachments ? { attachments } : {}) // include only if truthy
     }
+
+    console.log(opt)
     const info = await transporter.sendMail(opt);
 
     console.log("✅ Email sent:", info.messageId);

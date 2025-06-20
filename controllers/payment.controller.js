@@ -968,14 +968,14 @@ const sendMails = asyncHandler(async (req, res) => {
     throw new ApiError(500, 'Failed to send mail to receiver');
   }
 
-  // const filePath = path.join(__dirname, '..', 'pdfs', 'Transaction_Recepit.pdf');
-  // fs.unlink(filePath, (err) => {
-  //   if (err) {
-  //     console.error('Error deleting the file:', err);
-  //   } else {
-  //     console.log('File deleted successfully.');
-  //   }
-  // });
+  const filePath = path.join(__dirname, '..', 'pdfs', 'Transaction_Recepit.pdf');
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      console.error('Error deleting the file:', err);
+    } else {
+      console.log('File deleted successfully.');
+    }
+  });
 
 
   return res

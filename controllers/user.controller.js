@@ -55,6 +55,7 @@ const signUp = asyncHandler(async (req, res) => {
 
   await user.save();
 
+  console.log(email)
   console.log(verificationCode);
 
   // TODO: update template and uncomment

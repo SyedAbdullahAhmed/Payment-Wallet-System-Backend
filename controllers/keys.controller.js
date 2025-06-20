@@ -89,8 +89,8 @@ const getKeys = asyncHandler(async (req, res) => {
     new ApiResponse(
       200,
       {
-        publicKey: Buffer.from(getKeys.publicKey).toString('base64'),
-        privateKey: Buffer.from(getKeys.privateKey).toString('base64')
+        publicKey: getKeys.publicKey,
+        privateKey: getKeys.privateKey
       },
       'Keys generated successfully.'
     )
