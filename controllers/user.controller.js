@@ -164,9 +164,9 @@ const signIn = asyncHandler(async (req, res) => {
   );
 
   const cookOptions = {
-    httpOnly: process.env.NODE_ENV !== 'development',
-    secure: process.env.NODE_ENV !== 'development',
-    sameSite: process.env.NODE_ENV !== 'development' ? 'lax' : 'strict',
+    httpOnly: false,
+    secure: false,
+    // sameSite: process.env.NODE_ENV !== 'development' ? 'lax' : 'strict',
     maxAge: 7 * 24 * 60 * 60 * 1000,
     path: '/',
   }
