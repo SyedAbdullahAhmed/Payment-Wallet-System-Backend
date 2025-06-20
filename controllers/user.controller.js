@@ -163,15 +163,15 @@ const signIn = asyncHandler(async (req, res) => {
     { expiresIn: '7d' }
   );
 
-
-
-  res.cookie('token', token, {
-    httpOnly: process.env.NODE_ENV === 'production',
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'strict',
+  const cookOptions = {
+    httpOnly: process.env.NODE_ENV !== 'development',
+    secure: process.env.NODE_ENV !== 'development',
+    sameSite: process.env.NODE_ENV !== 'development' ? 'lax' : 'strict',
     maxAge: 7 * 24 * 60 * 60 * 1000,
     path: '/',
-  });
+  }
+  console.log(cookOptions)
+  res.cookie('token', token, cookOptions);
 
   if (!token) {
     throw new ApiError(500, 'Failed to generate token');
