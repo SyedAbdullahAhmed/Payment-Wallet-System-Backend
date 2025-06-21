@@ -13,6 +13,7 @@ const { verifyJWT } = require("./middlewares/auth")
 // const generalController = require('./controllers/general.controller')
 const createTransactionReceipt = require("./utils/createTransactionRecepit")
 
+
 const connectDB = require('./db/connection')
 connectDB()
 
